@@ -1,0 +1,60 @@
+sign-language-app/
+├── backend/
+│   ├── app/
+│   │   ├── __init__.py
+│   │   ├── main.py                 # Entry point FastAPI & route WebSocket
+│   │   ├── core/
+│   │   │   └── config.py           # Konfigurasi aplikasi
+│   │   ├── ml/
+│   │   │   ├── model_loader.py     # Script untuk load model ML (.pkl/.h5)
+│   │   │   └── processor.py        # Logika inferensi / prediksi gestur
+│   │   └── models/
+│   │       └── sign_model.pkl      # File model ML yang sudah dilatih
+│   ├── requirements.txt            # Dependency (fastapi, uvicorn, scikit-learn, dll)
+│   └── train_model/                # Folder terpisah khusus riset/training
+│       ├── dataset/                # Data koordinat tangan (.csv)
+│       ├── collect_data.py         # Script untuk ngumpulin koordinat tangan
+│       └── train.py                # Script untuk training model ML
+│
+├── frontend/
+│   ├── index.html                  # Halaman utama (Video & Hasil Teks)
+│   ├── css/
+│   │   └── style.css               # Desain UI website
+│   └── js/
+│       ├── app.js                  # Logika WebSocket & UI controller
+│       └── hand_detector.js        # Pemrosesan MediaPipe Hands (jika pakai Strategi A)
+└── README.md
+
+
+
+gesture-recognition/
+│
+├── data/
+│   ├── raw/                           # Dataset mentah dari Anda
+│   │   ├── images/                    # Folder berisi gambar huruf (A-Z) dan angka (0-9)
+│   │   └── videos/                    # Folder berisi rekaman video kata (misal: "Halo", "Terima Kasih")
+│   │
+│   └── processed/                     # Hasil ekstraksi MediaPipe (siap untuk training)
+│       ├── static_landmarks/          # File .npy/.csv untuk huruf & angka (Dimensi: 21 x 3 per sampel)
+│       └── dynamic_landmarks/         # File .npy/.csv untuk kata (Dimensi: T x 21 x 3 per sampel)
+│
+├── models/
+│   ├── static_model.h5                # Model yang dilatih khusus Huruf & Angka (Dense/MLP)
+│   ├── dynamic_model.h5               # Model yang dilatih khusus Kata (CNN-LSTM)
+│   ├── label_static.json              # Mapping output kelas huruf & angka {"A": 0, "B": 1, "1": 26...}
+│   └── label_dynamic.json             # Mapping output kelas kata {"Halo": 0, "Saya": 1...}
+│
+├── src/
+│   ├── __init__.py
+│   ├── config.py                      # Konfigurasi T sequence, threshold, dan path direktori
+│   ├── extract_features.py            # Script untuk konversi gambar & video menjadi koordinat landmark
+│   ├── preprocessing.py               # Fungsi normalisasi koordinat (berlaku untuk gambar & video)
+│   ├── model_architectures.py         # Berisi 2 definisi model: 1) Static MLP, 2) Dynamic CNN-LSTM
+│   └── post_processing.py             # Buffer & smoothing (khusus digunakan pada model dinamis)
+│
+├── train_static.py                    # Script training untuk Huruf & Angka
+├── train_dynamic.py                   # Script training untuk Kata
+├── inference_realtime.py              # Script utama implementasi Webcam (Menggabungkan kedua model)
+│
+├── requirements.txt
+└── README.md
